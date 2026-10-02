@@ -1,0 +1,18 @@
+{
+  "LlamaIndex API": {
+    "PORT": "HTTP routing port; one Uvicorn worker listens here.",
+    "DATABASE_URL": "Private PostgreSQL connection for DBOS runtime, workflow store, events and demo ledger.",
+    "API_TOKEN": "Generated bearer secret protecting all run, event, debugger and documentation routes.",
+    "DBOS_EXECUTOR_PREFIX": "Permanent single-slot executor lease prefix; do not change while runs are pending.",
+    "PROPOSAL_MODE": "deterministic (no external call) or openai (requires a separately supplied OPENAI_API_KEY).",
+    "OPENAI_MODEL": "Hosted proposal model; used only in openai mode and incurs provider charges.",
+    "OPENAI_TIMEOUT_SECONDS": "Bounded hosted-model request timeout from 1 to 120 seconds."
+  },
+  "Postgres": {
+    "PORT": "Private PostgreSQL listener; never add a public TCP proxy.",
+    "POSTGRES_USER": "Dedicated database owner used for DBOS and LlamaIndex migrations.",
+    "POSTGRES_DB": "Dedicated workflow database, including requests, approvals and ledger.",
+    "POSTGRES_PASSWORD": "Generated database password referenced privately by the API.",
+    "PGDATA": "Database files inside the persistent PostgreSQL volume."
+  }
+}

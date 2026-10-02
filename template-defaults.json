@@ -1,0 +1,18 @@
+{
+  "LlamaIndex API": {
+    "PORT": "3000",
+    "DATABASE_URL": "postgresql://${{Postgres.POSTGRES_USER}}:${{Postgres.POSTGRES_PASSWORD}}@${{Postgres.RAILWAY_PRIVATE_DOMAIN}}:5432/${{Postgres.POSTGRES_DB}}",
+    "API_TOKEN": "${{secret(48)}}",
+    "DBOS_EXECUTOR_PREFIX": "llamaindex-approval",
+    "PROPOSAL_MODE": "deterministic",
+    "OPENAI_MODEL": "gpt-4.1-mini-2025-04-14",
+    "OPENAI_TIMEOUT_SECONDS": "30"
+  },
+  "Postgres": {
+    "PORT": "5432",
+    "POSTGRES_USER": "workflows",
+    "POSTGRES_DB": "workflows",
+    "POSTGRES_PASSWORD": "${{secret(32)}}",
+    "PGDATA": "/var/lib/postgresql/data/pgdata"
+  }
+}

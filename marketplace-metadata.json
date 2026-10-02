@@ -1,0 +1,11 @@
+{
+  "directory": "llamaindex-durable-agents",
+  "name": "LlamaIndex durable agents",
+  "category": "AI/ML",
+  "description": "LlamaIndex approvals with DBOS recovery and private PostgreSQL.",
+  "icon": "https://raw.githubusercontent.com/run-llama/llama-agents/main/docs/src/assets/logo-chip-enormous.png",
+  "origins": [
+    {"name":"LlamaIndex Workflows","url":"https://github.com/run-llama/llama-agents"},
+    {"name":"DBOS","url":"https://github.com/dbos-inc/dbos-transact-py"}
+  ]
+}

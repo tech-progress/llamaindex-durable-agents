@@ -1,0 +1,41 @@
+name: rt-llama-cb5c13c4
+services:
+  postgres:
+    image: postgres:17.9-bookworm@sha256:47f917f7409eacd22fc5dfb1dee634e1b55cf0c01d1a7eb701be2227a03e0641
+    environment:
+      POSTGRES_USER: workflows
+      POSTGRES_DB: workflows
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Export a random POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U workflows -d workflows"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+  api:
+    image: rt-llama-cb5c13c4-api:1.0.0
+    build: .
+    environment:
+      DATABASE_URL: postgresql://workflows:${POSTGRES_PASSWORD:?}@postgres:5432/workflows
+      API_TOKEN: ${API_TOKEN:?Export a random API_TOKEN of at least 32 characters}
+      PORT: "3000"
+      DBOS_EXECUTOR_PREFIX: llamaindex-approval
+      PROPOSAL_MODE: ${PROPOSAL_MODE:-deterministic}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini-2025-04-14}
+      OPENAI_TIMEOUT_SECONDS: ${OPENAI_TIMEOUT_SECONDS:-30}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    ports:
+      - "127.0.0.1:18211:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, /app/.venv/bin/python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:3000/readyz', timeout=3)"]
+      interval: 2s
+      timeout: 4s
+      retries: 45
+    stop_grace_period: 10s
+volumes:
+  postgres-data:
