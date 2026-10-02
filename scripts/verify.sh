@@ -9,7 +9,7 @@ for file in "${required[@]}"; do test -f "$file" || { echo "Missing $file" >&2; 
 version="$(cat VERSION)"
 [[ "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]
 rg -q "^## \[${version//./\\.}\] - [0-9]{4}-[0-9]{2}-[0-9]{2}$" CHANGELOG.md
-for file in README.md PUBLISHING.md; do rg -Fq "current template release is \`v$version\`" "$file"; done
+for file in README.md UPGRADE.md; do rg -Fq "current template release is \`v$version\`" "$file"; done
 for heading in '# Deploy and Host' '## About Hosting' '## Why Deploy' '## Common Use Cases' '## Dependencies for' '### Deployment Dependencies'; do rg -Fq "$heading" MARKETPLACE.md; done
 timeout 120 uv lock --check
 timeout 120 bun install --frozen-lockfile >/dev/null

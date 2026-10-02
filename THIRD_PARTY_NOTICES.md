@@ -1,0 +1,21 @@
+# Third-party notices and source-build boundary
+
+The owner's MIT grant covers newly authored recipe/application code only. This repository distributes application source, a lockfile and a Docker build recipe, not a prebuilt application image, model weights or upstream frontend assets. Building the recipe downloads upstream distributions under their own licenses. Do not label the resulting combined image MIT-only, remove packaged notices, or infer a complete security clearance from this inventory.
+
+## Runtime inventory and retained notices
+
+`runtime-license-inventory.json` records the actual Linux runtime Python distributions and Debian binary/source package versions, with SHA-256 hashes and original notice paths. Python packages retain their installed `.dist-info` licenses. All installed Debian packages retain `/usr/share/doc/<package>/copyright` and referenced `/usr/share/common-licenses` texts; Python retains its PSF license. Native libpq is Debian `libpq5` 15.19-0+deb12u1, with its PostgreSQL notice and the Debian-managed native-library dependency chain. uv/uvx and their Rust dependency closure are build-stage tools, not final-runtime artifacts. The bundled `psycopg-binary` wheel is explicitly excluded: DBOS's optional binary extra otherwise selects it even when the recipe requests pure Psycopg.
+
+The five LlamaIndex distributions use the original upstream MIT notice supplied separately in `licenses/LlamaIndex-MIT.txt`, because their wheels do not all include a complete license file. The immutable inspected source is [LlamaIndex llama-agents](https://github.com/run-llama/llama-agents/tree/39f2c5df404ce35bfe0d4fdf9268f76b6327cc6a). DBOS retains its installed MIT notice; [DBOS Python](https://github.com/dbos-inc/dbos-transact-py) is the other main product. Python-dateutil's actual packaged license provides Apache-2.0 and BSD terms; empty scanner expressions do not supersede that file. Other runtime packages retain their MIT, Apache, BSD or PSF notices as recorded in the inventory.
+
+## LGPL and MPL components
+
+Psycopg 3.3.6 remains LGPL-3.0-only, not MIT. Its Python sources and LGPL text are installed intact and the module dynamically loads Debian's libpq. Users may replace or modify it and rebuild the application; no signature mechanism or application restriction prevents that. The exact Psycopg source archive URL and SHA-256 are in `uv.lock`; [Psycopg source](https://github.com/psycopg/psycopg/tree/3.3.6) and its build instructions remain available. Preserve LGPL/GPL texts and the ability to relink/replace components when conveying a compiled combined image. No Psycopg source is modified by this recipe.
+
+Certifi 2026.7.22 is MPL-2.0. Its original license and unmodified Python sources remain installed; its exact upstream source archive and checksum are in `uv.lock`. Modifications to MPL-covered files must remain under MPL and be made available when distributed. Newly authored application files are separate works, not a relicensing of Certifi.
+
+The Debian base and native dependencies include GPL/LGPL components with independently retained copyright/source notices. The inventory identifies their exact Debian source package/version; source is supplied by the [Debian source archive](https://sources.debian.org/) and [snapshot archive](https://snapshot.debian.org/), including the corresponding security repository. A distributor of a built image must comply with the applicable corresponding-source/notice obligations; a lockfile or an MIT wrapper license is not a substitute. This source-only recipe does not publish a combined binary image or offer a blanket legal assurance about later modified images.
+
+## Branding and optional services
+
+The listing links the upstream LlamaIndex product icon; no logo asset or trademark rights are relicensed or vendored. This is an independent evaluation recipe, not a vendor-endorsed service. The optional native debugger loads upstream versioned CDN assets at runtime and is outside the supported JSON API workflow; those assets are not copied into this distribution. Optional OpenAI requests do not bundle model weights, confer provider rights, or establish real-provider quality or exactly-once billing.

@@ -1,6 +1,6 @@
 # LlamaIndex durable agents
 
-An **evaluation template** combining [LlamaIndex Workflows](https://github.com/run-llama/llama-agents) and [DBOS Python](https://github.com/dbos-inc/dbos-transact-py). The current template release is `v1.0.0`. This is an approval-agent starter, not a payment processor or an autonomous finance product.
+An **evaluation template** combining [LlamaIndex Workflows](https://github.com/run-llama/llama-agents) and [DBOS Python](https://github.com/dbos-inc/dbos-transact-py). The current template release is `v1.0.1`. This is an approval-agent starter, not a payment processor or an autonomous finance product.
 
 ## What runs
 
@@ -14,7 +14,7 @@ Pinned runtime: `llama-index-workflows==2.25.0`, `llama-agents-dbos==0.7.0`, `ll
 
 `.railway/railway.ts` describes the graph. Application build is `Dockerfile`; start is `/app/start.sh`; routing port is 3000; health check is `/readyz` with a 120-second timeout. Generate independent API/database secrets, restore `template-defaults.json`, grant an HTTP domain only to **LlamaIndex API**, and attach the PostgreSQL volume. Use exactly one replica and stop the old API process before replacement; see the lease limitation below.
 
-The distribution source is `tech-progress/llamaindex-durable-agents`, branch `release-v1`, root `/`. Immutable `v1.0.0` identifies this release. Fork maintainers must change `TEMPLATE_SOURCE_REPO`, establish their own slash-free release branch, and authorize Railway's GitHub App. Watch patterns derive from the selected root. These are maintainer-local IaC inputs, not app runtime variables. IaC uses native secret functions, never deterministic SDK `randomString`; for a disposable source bootstrap supply cryptographically random `TEMPLATE_POSTGRES_PASSWORD` and `TEMPLATE_API_TOKEN`, and preserve initialized credentials when reapplying.
+The distribution source is `tech-progress/llamaindex-durable-agents`, branch `release-v1`, root `/`. Immutable `v1.0.1` identifies this release; `v1.0.0` remains unchanged. Fork maintainers must change `TEMPLATE_SOURCE_REPO`, establish their own slash-free release branch, and authorize Railway's GitHub App. Watch patterns derive from the selected root. These are maintainer-local IaC inputs, not app runtime variables. IaC uses native secret functions, never deterministic SDK `randomString`; for a disposable source bootstrap supply cryptographically random `TEMPLATE_POSTGRES_PASSWORD` and `TEMPLATE_API_TOKEN`, and preserve initialized credentials when reapplying.
 
 ## Environment variables
 
@@ -83,4 +83,4 @@ The upstream executor lease is **experimental**: one slot, a 2-second heartbeat,
 
 Hosted mode sends the query and policy excerpts to OpenAI and incurs model charges. Successful proposal-step outputs are journaled; a crash after the provider receives a request but before step persistence can **repeat the paid call**. No billing exactly-once guarantee, provider availability SLA, output quality gate or paid-provider smoke is claimed. Keep model output advisory; approval and ledger amount come from validated server data, never model-generated tool arguments.
 
-See `SUPPORT.md` and `UPGRADE.md` for operational boundaries. `LICENSE` grants MIT only for recipe-owned code; upstream LlamaIndex/DBOS, PostgreSQL, LGPL Psycopg and other dependencies retain their own notices and licenses.
+See `SUPPORT.md` and `UPGRADE.md` for operational boundaries. `LICENSE` grants MIT only for recipe-owned code; upstream LlamaIndex/DBOS, PostgreSQL, LGPL Psycopg and other dependencies retain their own notices and licenses. `THIRD_PARTY_NOTICES.md` describes the source-build distribution boundary, replacement/source rights and the exact runtime inventory. The final image excludes uv/uvx and the bundled Psycopg binary wheel; it retains Python/package/Debian notices and dynamically loads Debian libpq. No model weights or frontend bundle are redistributed by this recipe.
