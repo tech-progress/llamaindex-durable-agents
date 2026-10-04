@@ -192,6 +192,23 @@ def main():
         ["docker", "inspect", "--format", "{{json .HostConfig.PortBindings}}", postgres_id], text=True, timeout=15
     ))
     assert not ports, "PostgreSQL must have no public host binding"
+    postgres_version = compose("exec", "-T", "postgres", "postgres", "--version").strip()
+    client_version = compose("exec", "-T", "postgres", "psql", "--version").strip()
+    defaults = json.loads(compose(
+        "exec", "-T", "postgres", "psql", "-U", "workflows", "-d", "workflows", "-At", "-c",
+        "SELECT json_build_object('version', version(), 'version_num', current_setting('server_version_num'), "
+        "'ssl', current_setting('ssl'), 'password_encryption', current_setting('password_encryption'), "
+        "'database', current_database(), 'owner', current_user, "
+        "'login_roles', (SELECT count(*) FROM pg_roles WHERE rolcanlogin), "
+        "'owner_superuser', (SELECT rolsuper FROM pg_roles WHERE rolname=current_user))",
+    ))
+    assert postgres_version.startswith("postgres (PostgreSQL) 17.11 "), postgres_version
+    assert client_version.startswith("psql (PostgreSQL) 17.11 "), client_version
+    assert defaults["version_num"] == "170011" and defaults["version"].startswith("PostgreSQL 17.11 "), defaults
+    assert defaults["ssl"] == "off" and defaults["password_encryption"] == "scram-sha-256", defaults
+    assert defaults["database"] == "workflows" and defaults["owner"] == "workflows", defaults
+    assert defaults["login_roles"] == 1 and defaults["owner_superuser"] is True, defaults
+    print(f"PASS: actual PostgreSQL binary {postgres_version}; client {client_version}; private defaults {json.dumps(defaults, sort_keys=True)}")
     bindings = json.loads(subprocess.check_output(
         ["docker", "inspect", "--format", "{{json .HostConfig.PortBindings}}", api_id], text=True, timeout=15
     ))

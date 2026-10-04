@@ -1,11 +1,11 @@
 # LlamaIndex durable agents
 
-An **evaluation template** combining [LlamaIndex Workflows](https://github.com/run-llama/llama-agents) and [DBOS Python](https://github.com/dbos-inc/dbos-transact-py). The current template release is `v1.0.1`. This is an approval-agent starter, not a payment processor or an autonomous finance product.
+An **evaluation template** combining [LlamaIndex Workflows](https://github.com/run-llama/llama-agents) and [DBOS Python](https://github.com/dbos-inc/dbos-transact-py). The current template release is `v1.0.2`. This is an approval-agent starter, not a payment processor or an autonomous finance product. Source releases and marketplace publication are separate: require the exact-source checks in `PUBLISHING.md`, not historical proof from another revision.
 
 ## What runs
 
 - **LlamaIndex API:** one non-root Docker container, one Uvicorn worker, one leased executor slot. The native LlamaIndex workflow searches a baked-in policy corpus, proposes an invoice entry, suspends for human approval, then records an approved demo ledger entry.
-- **Postgres:** private PostgreSQL 17.9 with a 5 GB `/var/lib/postgresql/data` volume. Holds DBOS execution state, LlamaIndex run store, context state, journal/ticks, event history, requests, immutable approval decisions and ledger rows. No public database port/proxy. No application volume.
+- **Postgres:** private PostgreSQL 17.11 with a 5 GB `/var/lib/postgresql/data` volume, pinned to `postgres:17.11-bookworm@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652`. Holds DBOS execution state, LlamaIndex run store, context state, journal/ticks, event history, requests, immutable approval decisions and ledger rows. No public database port/proxy. No application volume.
 - Optional hosted proposals use OpenAI's Responses API inside the actual LlamaIndex `plan` step; deterministic mode needs no provider and makes no paid calls.
 
 Pinned runtime: `llama-index-workflows==2.25.0`, `llama-agents-dbos==0.7.0`, `llama-agents-server==0.8.0`, `dbos==2.31.1`; the complete Python dependency graph is in `uv.lock`. DBOS 3.2.0 was observed but rejected by the local compatibility gate: the LlamaIndex adapter still constructs queues using the DBOS 2 API. Python, uv and PostgreSQL images use immutable digests; Railway IaC is locked to `railway==3.6.0` in `bun.lock`.
@@ -14,7 +14,7 @@ Pinned runtime: `llama-index-workflows==2.25.0`, `llama-agents-dbos==0.7.0`, `ll
 
 `.railway/railway.ts` describes the graph. Application build is `Dockerfile`; start is `/app/start.sh`; routing port is 3000; health check is `/readyz` with a 120-second timeout. Generate independent API/database secrets, restore `template-defaults.json`, grant an HTTP domain only to **LlamaIndex API**, and attach the PostgreSQL volume. Use exactly one replica and stop the old API process before replacement; see the lease limitation below.
 
-The distribution source is `tech-progress/llamaindex-durable-agents`, branch `release-v1`, root `/`. Immutable `v1.0.1` identifies this release; `v1.0.0` remains unchanged. Fork maintainers must change `TEMPLATE_SOURCE_REPO`, establish their own slash-free release branch, and authorize Railway's GitHub App. Watch patterns derive from the selected root. These are maintainer-local IaC inputs, not app runtime variables. IaC uses native secret functions, never deterministic SDK `randomString`; for a disposable source bootstrap supply cryptographically random `TEMPLATE_POSTGRES_PASSWORD` and `TEMPLATE_API_TOKEN`, and preserve initialized credentials when reapplying.
+The distribution source is `tech-progress/llamaindex-durable-agents`, with `main` and `release-v1` branches, root `/`; IaC selects `release-v1`. Immutable `v1.0.2` identifies this release. Historical immutable `v1.0.1` identifies commit `989e904`; it and `v1.0.0` remain unchanged. Fork maintainers must change `TEMPLATE_SOURCE_REPO`, establish their own slash-free release branch, and authorize Railway's GitHub App. Watch patterns derive from the selected root. These are maintainer-local IaC inputs, not app runtime variables. IaC uses native secret functions, never deterministic SDK `randomString`; for a disposable source bootstrap supply cryptographically random `TEMPLATE_POSTGRES_PASSWORD` and `TEMPLATE_API_TOKEN`, and preserve initialized credentials when reapplying.
 
 ## Environment variables
 
@@ -44,7 +44,7 @@ From this directory, install `uv`, Bun, Docker Compose, `jq`, `rg`, OpenSSL and 
 ./scripts/verify.sh --local
 ```
 
-The local verifier builds without cache, starts an empty isolated `rt-llama-cb5c13c4` project, exposes **only** `127.0.0.1:18211`, runs container tests and SQL replay tests, kills/replaces API containers while approval is pending, checks original run IDs and event history, verifies outbox recovery and conflict rejection, records CPU/memory, and removes its own containers/network/volumes on exit. It refuses pre-existing resources with that project label. Hosted-provider HTTP is mocked; no paid calls are made. Integration tests are explicitly skipped in the host-only suite and run against the isolated database in `--local`.
+The local verifier builds without cache, starts an empty isolated `rt-llama-cb5c13c4` project, exposes **only** loopback API ports (18211 and temporary contender port 18213), runs container tests and SQL replay tests, asserts the actual PostgreSQL 17.11 server with private default settings, kills/replaces API containers while approval is pending, checks original run IDs and event history, verifies outbox recovery and conflict rejection, records CPU/memory, and removes its own containers/network/volumes on exit. It refuses pre-existing resources with that project label. Hosted-provider HTTP is mocked; no paid calls are made. Integration tests are explicitly skipped in the host-only suite and run against the isolated database in `--local`.
 
 For manual use (do not run concurrently with the verifier; it reserves this same project):
 

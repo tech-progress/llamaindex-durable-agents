@@ -1,6 +1,7 @@
 import copy
 import json
 import subprocess
+import tomllib
 import unittest
 from pathlib import Path
 
@@ -16,6 +17,20 @@ class DraftTests(unittest.TestCase):
         cls.graph = json.loads(subprocess.check_output(
             [str(ROOT / "node_modules/.bin/railway-iac-ts"), ".railway/railway.ts"], cwd=ROOT
         ))
+
+    def test_postgres_pin_and_recipe_version(self):
+        postgres_image = "postgres:17.11-bookworm@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652"
+        resources = {resource["name"]: resource for resource in self.graph["graph"]["resources"]}
+        self.assertEqual(resources["Postgres"]["source"], {"type": "image", "image": postgres_image})
+        compose = ROOT.joinpath("compose.yaml").read_text()
+        self.assertIn(f"    image: {postgres_image}\n", compose)
+        version = ROOT.joinpath("VERSION").read_text().strip()
+        self.assertEqual(version, "1.0.2")
+        self.assertEqual(tomllib.loads(ROOT.joinpath("pyproject.toml").read_text())["project"]["version"], version)
+        locked_recipe = next(package for package in tomllib.loads(ROOT.joinpath("uv.lock").read_text())["package"]
+                             if package["name"] == "railway-llamaindex-durable-agents")
+        self.assertEqual(locked_recipe["version"], version)
+        self.assertIn(f"    image: rt-llama-cb5c13c4-api:{version}\n", compose)
 
     def contaminated(self):
         return {"data": {"template": {"name": "Unrelated seed", "serializedConfig": {

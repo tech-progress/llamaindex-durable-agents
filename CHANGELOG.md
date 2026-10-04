@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.2] - 2026-10-04
+
+Source release and marketplace publication are distinct; exact-revision cloud qualification remains a prerequisite to promotion.
+
+- Pin Compose and Railway IaC to PostgreSQL 17.11 Bookworm at the verified immutable image index.
+- Keep API dependencies, Python/libpq pins, executor leasing and one-slot stop-before-replace behavior unchanged.
+- Correct publication/source history and distinguish immutable v1.0.1 (`989e904`) evidence from this unqualified candidate.
+- Assert the actual PostgreSQL version and private default-service boundary in local verification.
+
 ## [1.0.1] - 2026-10-02
 
 - Keep uv and uvx in the dependency-build stage only; final runtime uses the locked virtual environment directly.

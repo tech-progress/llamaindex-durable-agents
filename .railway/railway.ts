@@ -8,7 +8,7 @@ if (!/^[\w.-]+$/.test(branch) || branch.includes("..")) throw new Error("Source 
 if (!rootDirectory.startsWith("/") || rootDirectory.includes("..")) throw new Error("Source root must be an absolute repository path");
 const sourceRoot = rootDirectory.replace(/\/+$/, "") || "/";
 const SOURCE = github(repository, { branch, rootDirectory: sourceRoot });
-const POSTGRES_IMAGE = "postgres:17.9-bookworm@sha256:47f917f7409eacd22fc5dfb1dee634e1b55cf0c01d1a7eb701be2227a03e0641";
+const POSTGRES_IMAGE = "postgres:17.11-bookworm@sha256:639ab7ceb90e13123085b741fb31ef493fba25463002f6da665352e7b534b652";
 
 export default defineRailway(() => {
   const storage = volume("Postgres Data", { sizeMB: 5000 });

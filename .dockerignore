@@ -7,5 +7,6 @@ node_modules
 __pycache__
 *.pyc
 FINDINGS.md
+.verification
 .railway
 scripts
