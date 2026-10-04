@@ -1,6 +1,6 @@
 [project]
 name = "railway-llamaindex-durable-agents"
-version = "1.0.2"
+version = "1.0.3"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "llama-agents-dbos==0.7.0",

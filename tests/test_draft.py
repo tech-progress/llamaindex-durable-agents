@@ -25,12 +25,14 @@ class DraftTests(unittest.TestCase):
         compose = ROOT.joinpath("compose.yaml").read_text()
         self.assertIn(f"    image: {postgres_image}\n", compose)
         version = ROOT.joinpath("VERSION").read_text().strip()
-        self.assertEqual(version, "1.0.2")
+        self.assertEqual(version, "1.0.3")
         self.assertEqual(tomllib.loads(ROOT.joinpath("pyproject.toml").read_text())["project"]["version"], version)
         locked_recipe = next(package for package in tomllib.loads(ROOT.joinpath("uv.lock").read_text())["package"]
                              if package["name"] == "railway-llamaindex-durable-agents")
         self.assertEqual(locked_recipe["version"], version)
         self.assertIn(f"    image: rt-llama-cb5c13c4-api:{version}\n", compose)
+        postgres_version = postgres_image.split(":", 1)[1].split("-", 1)[0]
+        self.assertIn(f"private PostgreSQL {postgres_version}.", ROOT.joinpath("MARKETPLACE.md").read_text())
 
     def contaminated(self):
         return {"data": {"template": {"name": "Unrelated seed", "serializedConfig": {

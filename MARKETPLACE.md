@@ -18,7 +18,7 @@ Explore durable human-in-the-loop orchestration without an external queue, GPU o
 
 ## Dependencies for LlamaIndex durable agents
 
-Pinned Python 3.12 application, LlamaIndex Workflows/DBOS packages, and private PostgreSQL 17.9. No DBOS Conductor or paid model is required for the default sample.
+Pinned Python 3.12 application, LlamaIndex Workflows/DBOS packages, and private PostgreSQL 17.11. No DBOS Conductor or paid model is required for the default sample.
 
 ### Deployment Dependencies
 

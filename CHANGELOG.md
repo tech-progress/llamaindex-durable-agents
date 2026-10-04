@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.3] - 2026-10-04
+
+- Correct the marketplace dependency summary to the selected PostgreSQL17.11 image.
+- Verify marketplace database-version consistency before freezing source; runtime dependencies and application behavior remain unchanged from1.0.2.
+- Preserve immutable historical tags and require renewed exact-source cloud qualification.
+
 ## [1.0.2] - 2026-10-04
 
 Source release and marketplace publication are distinct; exact-revision cloud qualification remains a prerequisite to promotion.

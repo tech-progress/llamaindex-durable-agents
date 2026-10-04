@@ -1,6 +1,6 @@
 # LlamaIndex durable agents
 
-An **evaluation template** combining [LlamaIndex Workflows](https://github.com/run-llama/llama-agents) and [DBOS Python](https://github.com/dbos-inc/dbos-transact-py). The current template release is `v1.0.2`. This is an approval-agent starter, not a payment processor or an autonomous finance product. Source releases and marketplace publication are separate: require the exact-source checks in `PUBLISHING.md`, not historical proof from another revision.
+An **evaluation template** combining [LlamaIndex Workflows](https://github.com/run-llama/llama-agents) and [DBOS Python](https://github.com/dbos-inc/dbos-transact-py). The current template release is `v1.0.3`. This is an approval-agent starter, not a payment processor or an autonomous finance product. Source releases and marketplace publication are separate: require the exact-source checks in `PUBLISHING.md`, not historical proof from another revision.
 
 ## What runs
 
@@ -14,7 +14,7 @@ Pinned runtime: `llama-index-workflows==2.25.0`, `llama-agents-dbos==0.7.0`, `ll
 
 `.railway/railway.ts` describes the graph. Application build is `Dockerfile`; start is `/app/start.sh`; routing port is 3000; health check is `/readyz` with a 120-second timeout. Generate independent API/database secrets, restore `template-defaults.json`, grant an HTTP domain only to **LlamaIndex API**, and attach the PostgreSQL volume. Use exactly one replica and stop the old API process before replacement; see the lease limitation below.
 
-The distribution source is `tech-progress/llamaindex-durable-agents`, with `main` and `release-v1` branches, root `/`; IaC selects `release-v1`. Immutable `v1.0.2` identifies this release. Historical immutable `v1.0.1` identifies commit `989e904`; it and `v1.0.0` remain unchanged. Fork maintainers must change `TEMPLATE_SOURCE_REPO`, establish their own slash-free release branch, and authorize Railway's GitHub App. Watch patterns derive from the selected root. These are maintainer-local IaC inputs, not app runtime variables. IaC uses native secret functions, never deterministic SDK `randomString`; for a disposable source bootstrap supply cryptographically random `TEMPLATE_POSTGRES_PASSWORD` and `TEMPLATE_API_TOKEN`, and preserve initialized credentials when reapplying.
+The distribution source is `tech-progress/llamaindex-durable-agents`, with `main` and `release-v1` branches, root `/`; IaC selects `release-v1`. Immutable `v1.0.3` identifies this release. Historical immutable `v1.0.1` identifies commit `989e904`; it and `v1.0.0` remain unchanged. Fork maintainers must change `TEMPLATE_SOURCE_REPO`, establish their own slash-free release branch, and authorize Railway's GitHub App. Watch patterns derive from the selected root. These are maintainer-local IaC inputs, not app runtime variables. IaC uses native secret functions, never deterministic SDK `randomString`; for a disposable source bootstrap supply cryptographically random `TEMPLATE_POSTGRES_PASSWORD` and `TEMPLATE_API_TOKEN`, and preserve initialized credentials when reapplying.
 
 ## Environment variables
 
